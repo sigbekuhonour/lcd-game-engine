@@ -1,10 +1,15 @@
 from PIL import Image
 from RPLCD.i2c import CharLCD
 import time
+from gpiozero import Button
+from gpiozero import Device
+from gpiozero.pins.pigpio import PiGPIOFactory
 
+Device.pin_factory = PiGPIOFactory()
 
 lcd = CharLCD(i2c_expander="PCF8574", address=0x27, port=1, cols=16, rows=2, dotsize=8)
-
+a_button = Button(6)
+b_button = Button(5)
 
 class Engine:
     def register_sprite(name, number):
@@ -65,10 +70,10 @@ class Engine:
         )
 
     def get_button_a():
-        return False
+        return a_button.is_pressed
 
     def get_button_b():
-        return False
+        return b_button.is_pressed
 
     objects = []
 
