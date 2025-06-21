@@ -7,6 +7,7 @@ import time
 from gpiozero import Button
 from gpiozero import Device
 from gpiozero.pins.pigpio import PiGPIOFactory
+import smbus
 
 Device.pin_factory = PiGPIOFactory()
 
@@ -14,6 +15,15 @@ Device.pin_factory = PiGPIOFactory()
 lcd = CharLCD(i2c_expander="PCF8574", address=0x27, port=1, cols=16, rows=2, dotsize=8)
 a_button = Button(6)
 b_button = Button(5)
+bus = smbus.SMBus(1)
+joystick_address = 0x48
+
+def read_channel( channel):
+    if channel > 3 or channel < 0:
+        return -1
+    bus.write_byte(joystick_address, 0x40 | channel)
+    bus.read_byte(joystick_address)  # Dummy read (first read is unreliable)
+    return bus.read_byte(joystick_address)
 
 class Engine:
     def register_sprite(name, number):
@@ -98,7 +108,7 @@ class Engine:
         right = False
         up = False
         down = False
-
+       
         def __init__(self, left, right, up, down):
             self.left = left
             self.right = right
@@ -106,11 +116,29 @@ class Engine:
             self.down = down
 
     def get_joystick():
+        x_val = read_channel(0)  # AIN0 (VRx)
+        y_val = read_channel(1)  # AIN1 (VRy)
+        x = x_val / 255
+        y = y_val / 255
+        left=False
+        right=False
+        up=False
+        down=False
+
+        if 0 <= x < 0.2:
+            left = True
+        if 0.8 < x <= 1:
+            right = True
+        if 0 <= y < 0.2:
+            down = True
+        if 0.8 < y <= 1:
+            up = True
+        
         return Engine.JoystickInputs(
-            left=False,
-            right=False,
-            up=False,
-            down=False,
+            left=left,
+            right=right,
+            up=up,
+            down=down,
         )
 
     def get_button_a():
