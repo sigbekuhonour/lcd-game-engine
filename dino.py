@@ -1,4 +1,4 @@
-from py_engine import Engine
+from lcd_engine import Engine
 import random
 
 Engine.register_sprite("dino", 0)
