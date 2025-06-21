@@ -100,6 +100,8 @@ class Engine:
         lcd.clear()
 
         while True:
+            start_time = time.time()
+
             loop()
 
             lcd.clear()
@@ -117,7 +119,9 @@ class Engine:
 
             Engine.rendered_cells.clear()
 
-            time.sleep(0.1)
+            elapsed = time.time() - start_time
+            if elapsed < 0.1:
+                time.sleep(0.1 - elapsed)
 
     def reset():
         Engine.state = Engine.initial_state.copy()
