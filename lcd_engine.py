@@ -91,7 +91,7 @@ class Engine:
     rendered_cells = []
 
     def render_cell(cell, x, y):
-        if 0 < x < 16 and 0 <= y < 2:
+        if 0 <= x < 16 and 0 <= y < 2:
             lcd.cursor_pos = (y, x)
             lcd.write_string(chr(cell) if isinstance(cell, int) else cell)
             Engine.rendered_cells.append((x, y))
