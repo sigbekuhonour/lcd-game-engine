@@ -1,6 +1,7 @@
 import pygame
 from PIL import Image
-
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
 
 class Engine:
     sprites = {}
@@ -35,11 +36,9 @@ class Engine:
 class Engine:
     class Sound:
         def __init__(self, music = 'default', soundEffects: list[str] = []):
-            # self.buzzer: TonalBuzzer = TonalBuzzer(BUZZER_PIN_POSITION)
+            self.buzzer: TonalBuzzer = TonalBuzzer(0) # TBD pin location
             self.currentNoteIndex = 0
-            self.soundtrackLine = 0
             self.soundEffects = {}
-            self.cont = True
 
             for effectName in soundEffects: 
                 with open(f"assets/soundeffects/{effectName}.txt") as f:
@@ -53,26 +52,17 @@ class Engine:
                 self.musicNotes = {i: notes[i] for i in range(self.soundtrackLength)}
                 f.close()
 
-        # Interrupts the soundtrack, play the sound effect, resume. Sole prop is an effect name.
         def playSoundEffect(self, effectName: str):
-            self.stopMusic()
             effectNotes: list[str] = self.soundEffects[effectName]
             for i in range(len(effectNotes)):
                 # TODO: determine transition step value to reduce choppiness
-                # self.buzzer.play(Tone(effectNotes[i]))
-                print(effectNotes[i])
-            self.startMusic()
-        
-        # Play music, on repeat
-        def startMusic(self): 
-                    for i in range(self.soundtrackLine, self.soundtrackLength):
-                        # TODO: determine transition step value to reduce choppiness
-                        # self.buzzer.play(Tone(self.musicNotes[i]))
-                        print(self.musicNotes[i])
-                    self.soundtrackLine = 0 
+                self.buzzer.play(Tone(effectNotes[i]))   
 
-        def stopMusic(self):
-            self.cont = False
+        # play the current note of the soundtrack. cycle to beginning when finished.
+        def playNote(self): 
+            # TODO: determine transition step value to reduce choppiness
+            self.buzzer.play(Tone(self.musicNotes[self.currentNoteIndex]))
+            self.currentNoteIndex = (self.currentNoteIndex + 1 ) % self.soundtrackLength
     class GameObject:
         x = 0
         y = 0
@@ -186,7 +176,6 @@ class Engine:
         pygame.display.flip()
 
         running = True
-
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
