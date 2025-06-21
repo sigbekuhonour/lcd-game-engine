@@ -53,7 +53,7 @@ def loop():
         Engine.player.jump_time -= 1
     elif Engine.get_button_a():
         Engine.player.jump_time = 8
-        Engine.state["sound"].playSoundEffect('dinojump')
+        Engine.state['soundEffect'] = 'dinojump'
 
     Engine.player.y = 0 if Engine.player.jump_time > 0 else 1
 
@@ -61,14 +61,16 @@ def loop():
         if Engine.player.x == obj.x and Engine.player.y == obj.y:
             Engine.reset()
             Engine.player.jump_time = 0
-
+    
+    Engine.state['soundEffect'] = ''
 
 # Start the game
 
 Engine.set_state(
     {
         "otimer": 0,  # Obstacle timer
-        "sound": Engine.Sound(soundEffects=['dinojump'])
+        "sound": Engine.Sound(soundEffects=['dinojump']),
+        "soundEffect": ''
     }
 )
 Engine.set_player(Player())

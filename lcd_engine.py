@@ -65,12 +65,15 @@ class Engine:
                 self.buzzer.play(Tone.from_frequency(effectNotes[i]))   
 
         # play the current note of the soundtrack. cycle to beginning when finished.
-        def playNote(self): 
-            if not self.buzzer:
-                return
-            # TODO: determine transition step value to reduce choppiness
-            self.buzzer.play(Tone.from_frequency(self.musicNotes[self.currentNoteIndex]))
-            self.currentNoteIndex = (self.currentNoteIndex + 1 ) % self.soundtrackLength
+        def playNote(self, effectName):
+                if not self.buzzer:
+                    return
+                elif(effectName): 
+                    self.playSoundEffect(effectName)
+                else: 
+                    # TODO: determine transition step value to reduce choppiness
+                    self.buzzer.play(Tone.from_frequency(self.musicNotes[self.currentNoteIndex]))
+                    self.currentNoteIndex = (self.currentNoteIndex + 1 ) % self.soundtrackLength
     class GameObject:
         x = 0
         y = 0
