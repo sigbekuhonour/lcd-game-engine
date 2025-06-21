@@ -1,7 +1,6 @@
 import pygame
 from PIL import Image
 
-
 class Engine:
     sprites = {}
 
@@ -32,6 +31,7 @@ class Engine:
             else:
                 raise ValueError(f"Sprite number {result} not registered.")
 
+class Engine:
     class GameObject:
         x = 0
         y = 0
@@ -145,7 +145,6 @@ class Engine:
         pygame.display.flip()
 
         running = True
-
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
