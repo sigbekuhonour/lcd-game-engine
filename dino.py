@@ -44,7 +44,6 @@ def loop():
     for obj in Engine.get_objects_of(Obstacle):
         if Engine.player.x == obj.x and Engine.player.y == obj.y:
             Engine.reset()
-            Engine.state["otimer"] = 0
             Engine.player.jump_time = 0
 
 
