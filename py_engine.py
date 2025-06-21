@@ -38,7 +38,7 @@ class Engine:
     class Sound:
         def __init__(self, music = 'default', soundEffects: list[str] = []):
             try: 
-                self.buzzer: TonalBuzzer = TonalBuzzer(0) # TBD pin location
+                self.buzzer: TonalBuzzer = TonalBuzzer(26)
             except BadPinFactory:
                 self.buzzer = None
                 print("buzzer setup failed")
