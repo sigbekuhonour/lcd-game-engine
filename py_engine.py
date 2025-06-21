@@ -2,6 +2,7 @@ import pygame
 from PIL import Image
 from gpiozero import TonalBuzzer
 from gpiozero.tones import Tone
+from gpiozero.exc import BadPinFactory
 
 class Engine:
     sprites = {}
@@ -36,7 +37,11 @@ class Engine:
 class Engine:
     class Sound:
         def __init__(self, music = 'default', soundEffects: list[str] = []):
-            self.buzzer: TonalBuzzer = TonalBuzzer(0) # TBD pin location
+            try: 
+                self.buzzer: TonalBuzzer = TonalBuzzer(0) # TBD pin location
+            except BadPinFactory:
+                self.buzzer = None
+                print("buzzer setup failed")
             self.currentNoteIndex = 0
             self.soundEffects = {}
 
@@ -53,6 +58,9 @@ class Engine:
                 f.close()
 
         def playSoundEffect(self, effectName: str):
+            if not self.buzzer:
+                return
+               
             effectNotes: list[str] = self.soundEffects[effectName]
             for i in range(len(effectNotes)):
                 # TODO: determine transition step value to reduce choppiness
@@ -60,6 +68,8 @@ class Engine:
 
         # play the current note of the soundtrack. cycle to beginning when finished.
         def playNote(self): 
+            if not self.buzzer:
+                return
             # TODO: determine transition step value to reduce choppiness
             self.buzzer.play(Tone(self.musicNotes[self.currentNoteIndex]))
             self.currentNoteIndex = (self.currentNoteIndex + 1 ) % self.soundtrackLength
