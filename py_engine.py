@@ -32,6 +32,47 @@ class Engine:
             else:
                 raise ValueError(f"Sprite number {result} not registered.")
 
+class Engine:
+    class Sound:
+        def __init__(self, music = 'default', soundEffects: list[str] = []):
+            # self.buzzer: TonalBuzzer = TonalBuzzer(BUZZER_PIN_POSITION)
+            self.currentNoteIndex = 0
+            self.soundtrackLine = 0
+            self.soundEffects = {}
+            self.cont = True
+
+            for effectName in soundEffects: 
+                with open(f"assets/soundeffects/{effectName}.txt") as f:
+                    notes = f.read().strip().split()
+                    self.soundEffects[effectName] = { q : notes[q] for q in range(len(notes))}
+                    f.close()
+
+            with open(f"assets/music/{music}.txt") as f:
+                notes = f.read().strip().split()
+                self.soundtrackLength = len(notes)
+                self.musicNotes = {i: notes[i] for i in range(self.soundtrackLength)}
+                f.close()
+
+        # Interrupts the soundtrack, play the sound effect, resume. Sole prop is an effect name.
+        def playSoundEffect(self, effectName: str):
+            self.stopMusic()
+            effectNotes: list[str] = self.soundEffects[effectName]
+            for i in range(len(effectNotes)):
+                # TODO: determine transition step value to reduce choppiness
+                # self.buzzer.play(Tone(effectNotes[i]))
+                print(effectNotes[i])
+            self.startMusic()
+        
+        # Play music, on repeat
+        def startMusic(self): 
+                    for i in range(self.soundtrackLine, self.soundtrackLength):
+                        # TODO: determine transition step value to reduce choppiness
+                        # self.buzzer.play(Tone(self.musicNotes[i]))
+                        print(self.musicNotes[i])
+                    self.soundtrackLine = 0 
+
+        def stopMusic(self):
+            self.cont = False
     class GameObject:
         x = 0
         y = 0
