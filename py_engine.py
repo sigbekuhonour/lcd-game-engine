@@ -1,8 +1,5 @@
 import pygame
 from PIL import Image
-from gpiozero import TonalBuzzer
-from gpiozero.tones import Tone
-from gpiozero.exc import BadPinFactory
 
 class Engine:
     sprites = {}
@@ -35,44 +32,6 @@ class Engine:
                 raise ValueError(f"Sprite number {result} not registered.")
 
 class Engine:
-    class Sound:
-        def __init__(self, music = 'default', soundEffects: list[str] = []):
-            try: 
-                self.buzzer: TonalBuzzer = TonalBuzzer(26)
-            except BadPinFactory:
-                self.buzzer = None
-                print("buzzer setup failed")
-            self.currentNoteIndex = 0
-            self.soundEffects = {}
-
-            for effectName in soundEffects: 
-                with open(f"assets/soundeffects/{effectName}.txt") as f:
-                    notes = f.read().strip().split()
-                    self.soundEffects[effectName] = { q : notes[q] for q in range(len(notes))}
-                    f.close()
-
-            with open(f"assets/music/{music}.txt") as f:
-                notes = f.read().strip().split()
-                self.soundtrackLength = len(notes)
-                self.musicNotes = {i: notes[i] for i in range(self.soundtrackLength)}
-                f.close()
-
-        def playSoundEffect(self, effectName: str):
-            if not self.buzzer:
-                return
-               
-            effectNotes: list[str] = self.soundEffects[effectName]
-            for i in range(len(effectNotes)):
-                # TODO: determine transition step value to reduce choppiness
-                self.buzzer.play(Tone(effectNotes[i]))   
-
-        # play the current note of the soundtrack. cycle to beginning when finished.
-        def playNote(self): 
-            if not self.buzzer:
-                return
-            # TODO: determine transition step value to reduce choppiness
-            self.buzzer.play(Tone(self.musicNotes[self.currentNoteIndex]))
-            self.currentNoteIndex = (self.currentNoteIndex + 1 ) % self.soundtrackLength
     class GameObject:
         x = 0
         y = 0
