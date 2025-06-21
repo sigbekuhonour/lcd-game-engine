@@ -9,57 +9,18 @@ class Player(Engine.GameObject):
         super().__init__(1, 1)
 
     def render(self):
-        return [
-            [0, 0, 1, 1, 1],
-            [0, 0, 1, 0, 1],
-            [1, 0, 1, 1, 1],
-            [1, 1, 1, 0, 0],
-            [1, 1, 1, 1, 0],
-            [1, 1, 1, 0, 0],
-            [1, 0, 1, 0, 0],
-        ]
+        return "dino"
 
 
 class Obstacle(Engine.GameObject):
-    kind = "CACTUS"
+    kind = "cactus"
 
     def __init__(self):
-        self.kind = random.choice(["CACTUS", "ROCK", "BIRD"])
-        super().__init__(15, 0 if self.kind == "BIRD" else 1)
+        self.kind = random.choice(["cactus", "rock", "bird"])
+        super().__init__(15, 0 if self.kind == "bird" else 1)
 
     def render(self):
-        if self.kind == "CACTUS":
-            return [
-                [0, 0, 1, 0, 0],
-                [1, 0, 1, 0, 0],
-                [1, 0, 1, 0, 1],
-                [1, 0, 1, 1, 1],
-                [1, 1, 1, 0, 0],
-                [0, 0, 1, 0, 0],
-                [0, 0, 1, 0, 0],
-            ]
-
-        if self.kind == "ROCK":
-            return [
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0],
-                [0, 1, 1, 0, 0],
-                [0, 1, 1, 1, 0],
-                [1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1],
-            ]
-
-        if self.kind == "BIRD":
-            return [
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 1, 0],
-                [0, 1, 0, 1, 0],
-                [1, 1, 1, 1, 1],
-                [0, 0, 0, 1, 0],
-                [0, 0, 0, 0, 0],
-            ]
+        return self.kind
 
 
 def loop():

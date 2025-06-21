@@ -1,4 +1,26 @@
 import pygame
+from PIL import Image
+
+
+def handle_render(rendered):
+    if isinstance(rendered, list):
+        return rendered
+    elif isinstance(rendered, str):
+        img = Image.open(f"assets/{rendered}.png").convert("RGBA").resize((5, 7))
+        matrix = []
+        for y in range(7):
+            row = []
+            for x in range(5):
+                r, g, b, a = img.getpixel((x, y))
+                if a > 0 and r < 128 and g < 128 and b < 128:
+                    row.append(1)
+                else:
+                    row.append(0)
+            matrix.append(row)
+
+        return matrix
+    else:
+        raise ValueError("Unsupported render type")
 
 
 class Engine:
@@ -126,9 +148,11 @@ class Engine:
             loop()
 
             for obj in Engine.objects:
-                draw_lcd_cell(obj.x, obj.y, obj.render())
+                draw_lcd_cell(obj.x, obj.y, handle_render(obj.render()))
 
-            draw_lcd_cell(Engine.player.x, Engine.player.y, Engine.player.render())
+            draw_lcd_cell(
+                Engine.player.x, Engine.player.y, handle_render(Engine.player.render())
+            )
 
             # Scale up the lcd_surface and blit to the screen
             scaled_surface = pygame.transform.scale(

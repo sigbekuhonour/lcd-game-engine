@@ -6,15 +6,7 @@ class Player(Engine.GameObject):
         super().__init__(x, y)
 
     def render(self):
-        return [
-            [1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 1, 1, 1],
-            [1, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1],
-        ]
+        return "@"
 
 
 class Enemy(Engine.GameObject):
@@ -28,15 +20,7 @@ class Kobold(Enemy):
         super().__init__(x, y, 2)
 
     def render(self):
-        return [
-            [1, 0, 0, 0, 1],
-            [1, 0, 0, 1, 0],
-            [1, 0, 1, 0, 0],
-            [1, 1, 0, 0, 0],
-            [1, 0, 1, 0, 0],
-            [1, 0, 0, 1, 0],
-            [1, 0, 0, 0, 1],
-        ]
+        return "K"
 
 
 def loop():
