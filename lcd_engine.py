@@ -8,7 +8,7 @@ lcd = CharLCD(i2c_expander="PCF8574", address=0x27, port=1, cols=16, rows=2, dot
 
 class Engine:
     def register_sprite(name, number):
-        img = Image.open(f"assets/{name}.png").convert("RGBA").resize((5, 7))
+        img = Image.open(f"assets/{name}.png").convert("RGBA").resize((5, 8))
 
         matrix = []
         for y in range(8):
