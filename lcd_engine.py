@@ -88,25 +88,34 @@ class Engine:
     def get_objects_of(class_name):
         return [obj for obj in Engine.objects if isinstance(obj, class_name)]
 
-    def run(loop):
-        def render_cell(cell, x, y):
-            if 0 < x < 16 and 0 <= y < 2:
-                lcd.cursor_pos = (y, x)
-                lcd.write_string(chr(cell) if isinstance(cell, int) else cell)
+    rendered_cells = []
 
+    def render_cell(cell, x, y):
+        if 0 < x < 16 and 0 <= y < 2:
+            lcd.cursor_pos = (y, x)
+            lcd.write_string(chr(cell) if isinstance(cell, int) else cell)
+            Engine.rendered_cells.append((x, y))
+
+    def run(loop):
         lcd.clear()
 
-        running = True
-
-        while running:
-            lcd.clear()
-
+        while True:
             loop()
 
-            for obj in Engine.objects:
-                render_cell(obj.render(), obj.x, obj.y)
+            lcd.clear()
 
-            render_cell(Engine.player.render(), Engine.player.x, Engine.player.y)
+            for obj in Engine.objects:
+                Engine.render_cell(obj.render(), obj.x, obj.y)
+
+            Engine.render_cell(Engine.player.render(), Engine.player.x, Engine.player.y)
+
+            for x in range(16):
+                for y in range(2):
+                    if (x, y) not in Engine.rendered_cells:
+                        lcd.cursor_pos = (y, x)
+                        lcd.write_string(" ")
+
+            Engine.rendered_cells.clear()
 
             time.sleep(0.1)
 
