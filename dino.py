@@ -37,7 +37,7 @@ class Obstacle(Engine.GameObject):
 
 
 def loop():
-    Engine.state["sound"].playNote()
+    Engine.state["sound"].playNote(Engine.state['soundEffect'])
     
     if Engine.state["otimer"] % 4 == 0:
         for obj in Engine.get_objects_of(Obstacle):

@@ -69,7 +69,6 @@ class Engine:
                 if not self.buzzer:
                     return
                 elif(effectName): 
-                    self.buzzer.stop()
                     self.playSoundEffect(effectName)
                 else: 
                     # TODO: determine transition step value to reduce choppiness
