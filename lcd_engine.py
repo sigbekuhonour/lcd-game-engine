@@ -65,7 +65,7 @@ class Engine:
                 self.buzzer.play(Tone.from_frequency(effectNotes[i]))   
 
         # play the current note of the soundtrack. cycle to beginning when finished.
-        def playNote(self, effectName):
+        def playNote(self, effectName = ''):
                 if not self.buzzer:
                     return
                 elif(effectName): 
