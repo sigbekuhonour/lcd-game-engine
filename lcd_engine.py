@@ -97,7 +97,7 @@ class Engine:
         if 0 <= x < 16 and 0 <= y < 2:
             lcd.cursor_pos = (y, x)
             lcd.write_string(chr(cell) if isinstance(cell, int) else cell)
-            Engine.rendered_cells.discard((x, y))
+            Engine.unrendered_cells.discard((x, y))
 
     def run(loop):
         lcd.clear()
@@ -120,7 +120,7 @@ class Engine:
                 lcd.cursor_pos = (y, x)
                 lcd.write_string(" ")
 
-            Engine.rendered_cells.clear()
+            Engine.unrendered_cells.clear()
 
             elapsed = time.time() - start_time
             if elapsed < 0.1:
