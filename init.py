@@ -1,8 +1,8 @@
+import importlib
 import pygame
-from dino import tick
 
 
-def main():
+def main(tick):
     CELL_WIDTH = 5
     CELL_HEIGHT = 7
     BORDER = 1
@@ -71,4 +71,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    game = input("What game would you like to play? ")
+    tick = importlib.import_module(game).tick
+
+    main(tick)
