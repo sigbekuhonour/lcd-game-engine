@@ -46,13 +46,13 @@ class Engine:
             for effectName in soundEffects: 
                 with open(f"assets/soundeffects/{effectName}.txt") as f:
                     notes = f.read().strip().split()
-                    self.soundEffects[effectName] = { q : notes[q] for q in range(len(notes))}
+                    self.soundEffects[effectName] = { q : float(notes[q]) for q in range(len(notes))}
                     f.close()
 
             with open(f"assets/music/{music}.txt") as f:
                 notes = f.read().strip().split()
                 self.soundtrackLength = len(notes)
-                self.musicNotes = {i: notes[i] for i in range(self.soundtrackLength)}
+                self.musicNotes = {i: float(notes[i]) for i in range(self.soundtrackLength)}
                 f.close()
 
         def playSoundEffect(self, effectName: str):
