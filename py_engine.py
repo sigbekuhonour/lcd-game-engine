@@ -1,6 +1,7 @@
 import pygame
 from PIL import Image
 
+
 class Engine:
     sprites = {}
 
@@ -31,7 +32,16 @@ class Engine:
             else:
                 raise ValueError(f"Sprite number {result} not registered.")
 
-class Engine:
+    class Sound:
+        def __init__(self, music="default", soundEffects: list[str] = []):
+            return
+
+        def playSoundEffect(self, effectName: str):
+            return
+
+        def playNote(self, effectName=""):
+            return
+
     class GameObject:
         x = 0
         y = 0
