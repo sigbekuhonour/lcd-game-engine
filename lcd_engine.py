@@ -1,15 +1,28 @@
 from PIL import Image
 from RPLCD.i2c import CharLCD
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
+from gpiozero.exc import BadPinFactory
 import time
 from gpiozero import Button
 from gpiozero import Device
 from gpiozero.pins.pigpio import PiGPIOFactory
+import smbus
 
 Device.pin_factory = PiGPIOFactory()
 
 lcd = CharLCD(i2c_expander="PCF8574", address=0x27, port=1, cols=16, rows=2, dotsize=8)
 a_button = Button(6)
 b_button = Button(5)
+bus = smbus.SMBus(1)
+joystick_address = 0x48
+
+def read_channel( channel):
+    if channel > 3 or channel < 0:
+        return -1
+    bus.write_byte(joystick_address, 0x40 | channel)
+    bus.read_byte(joystick_address)  # Dummy read (first read is unreliable)
+    return bus.read_byte(joystick_address)
 
 class Engine:
     def register_sprite(name, number):
@@ -29,7 +42,47 @@ class Engine:
         byte_map = [int("".join(map(str, row)), 2) for row in matrix]
 
         lcd.create_char(number, byte_map)
+    class Sound:
+        def __init__(self, music = 'default', soundEffects: list[str] = []):
+            try: 
+                self.buzzer: TonalBuzzer = TonalBuzzer(26)
+            except BadPinFactory:
+                self.buzzer = None
+                print("buzzer setup failed")
+            self.currentNoteIndex = 0
+            self.soundEffects = {}
 
+            for effectName in soundEffects: 
+                with open(f"assets/soundeffects/{effectName}.txt") as f:
+                    notes = f.read().strip().split()
+                    self.soundEffects[effectName] = { q : float(notes[q]) for q in range(len(notes))}
+                    f.close()
+
+            with open(f"assets/music/{music}.txt") as f:
+                notes = f.read().strip().split()
+                self.soundtrackLength = len(notes)
+                self.musicNotes = {i: float(notes[i]) for i in range(self.soundtrackLength)}
+                f.close()
+
+        def playSoundEffect(self, effectName: str):
+            if not self.buzzer:
+                return
+               
+            effectNotes: list[str] = self.soundEffects[effectName]
+            for i in range(len(effectNotes)):
+                # TODO: determine transition step value to reduce choppiness
+                self.buzzer.play(Tone.from_frequency(effectNotes[i]))   
+
+        # play the current note of the soundtrack. cycle to beginning when finished.
+        def playNote(self, effectName = ''):
+                if not self.buzzer:
+                    return
+                elif(effectName): 
+                    self.playSoundEffect(effectName)
+                else: 
+                    # TODO: determine transition step value to reduce choppiness
+                    self.buzzer.play(Tone.from_frequency(self.musicNotes[self.currentNoteIndex]))
+                    self.currentNoteIndex = (self.currentNoteIndex + 1 ) % self.soundtrackLength
     class GameObject:
         x = 0
         y = 0
@@ -54,7 +107,7 @@ class Engine:
         right = False
         up = False
         down = False
-
+       
         def __init__(self, left, right, up, down):
             self.left = left
             self.right = right
@@ -62,11 +115,29 @@ class Engine:
             self.down = down
 
     def get_joystick():
+        x_val = read_channel(0)  # AIN0 (VRx)
+        y_val = read_channel(1)  # AIN1 (VRy)
+        x = x_val / 255
+        y = y_val / 255
+        left=False
+        right=False
+        up=False
+        down=False
+
+        if 0 <= x < 0.2:
+            left = True
+        if 0.8 < x <= 1:
+            right = True
+        if 0 <= y < 0.2:
+            down = True
+        if 0.8 < y <= 1:
+            up = True
+        
         return Engine.JoystickInputs(
-            left=False,
-            right=False,
-            up=False,
-            down=False,
+            left=left,
+            right=right,
+            up=up,
+            down=down,
         )
 
     def get_button_a():
