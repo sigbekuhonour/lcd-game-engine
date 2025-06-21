@@ -1,8 +1,8 @@
-import engine
+from engine import Engine
 import random
 
 
-class Player(engine.GameObject):
+class Player(Engine.GameObject):
     jump_time = 0
 
     def __init__(self):
@@ -20,7 +20,7 @@ class Player(engine.GameObject):
         ]
 
 
-class Obstacle(engine.GameObject):
+class Obstacle(Engine.GameObject):
     kind = "CACTUS"
 
     def __init__(self):
@@ -62,37 +62,37 @@ class Obstacle(engine.GameObject):
             ]
 
 
-player = Player()
-objects = [player]
-obstacle_timer = 0
+def loop():
+    if Engine.state["otimer"] % 4 == 0:
+        for obj in Engine.get_objects_of(Obstacle):
+            obj.x -= 1
+
+    if Engine.state["otimer"] == 0:
+        Engine.new_object(Obstacle())
+        Engine.state["otimer"] = 20
+
+    Engine.state["otimer"] -= 1
+
+    if Engine.player.jump_time > 0:
+        Engine.player.jump_time -= 1
+    elif Engine.get_button_a():
+        Engine.player.jump_time = 8
+
+    Engine.player.y = 0 if Engine.player.jump_time > 0 else 1
+
+    for obj in Engine.get_objects_of(Obstacle):
+        if Engine.player.x == obj.x and Engine.player.y == obj.y:
+            Engine.reset()
+            Engine.state["otimer"] = 0
+            Engine.player.jump_time = 0
 
 
-def tick():
-    global obstacle_timer
-    global objects
+# Start the game
 
-    if obstacle_timer % 4 == 0:
-        for obj in objects:
-            if isinstance(obj, Obstacle):
-                obj.x -= 1
-
-    if obstacle_timer == 0:
-        objects.append(Obstacle())
-        obstacle_timer = 20
-
-    obstacle_timer -= 1
-
-    if player.jump_time > 0:
-        player.jump_time -= 1
-    elif engine.get_button_a():
-        player.jump_time = 8
-
-    player.y = 0 if player.jump_time > 0 else 1
-
-    for obj in objects:
-        if isinstance(obj, Obstacle):
-            if player.x == obj.x and player.y == obj.y:
-                objects = [player]
-                obstacle_timer = 0
-
-    return objects
+Engine.set_state(
+    {
+        "otimer": 0,  # Obstacle timer
+    }
+)
+Engine.set_player(Player())
+Engine.run(loop)

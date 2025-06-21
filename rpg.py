@@ -1,7 +1,7 @@
-import engine
+from engine import Engine
 
 
-class Player(engine.GameObject):
+class Player(Engine.GameObject):
     def __init__(self, x=0, y=0):
         super().__init__(x, y)
 
@@ -17,7 +17,7 @@ class Player(engine.GameObject):
         ]
 
 
-class Enemy(engine.GameObject):
+class Enemy(Engine.GameObject):
     def __init__(self, x=0, y=0, health=1):
         super().__init__(x, y)
         self.health = health
@@ -39,37 +39,34 @@ class Kobold(Enemy):
         ]
 
 
-player = Player()
-objects = [player, Kobold(x=7, y=0), Kobold(x=12, y=1)]
+def loop():
+    old_player_pos = [Engine.player.x, Engine.player.y]
 
+    def reset_player_pos():
+        Engine.player.x = old_player_pos[0]
+        Engine.player.y = old_player_pos[1]
 
-def tick():
-    global objects
-
-    js = engine.get_joystick()
-
-    old_player_pos = [player.x, player.y]
-
-    def reset_pos():
-        player.x = old_player_pos[0]
-        player.y = old_player_pos[1]
+    js = Engine.get_joystick()
 
     if js.left:
-        player.x = max(0, player.x - 1)
+        Engine.player.x = max(0, Engine.player.x - 1)
     if js.right:
-        player.x = min(15, player.x + 1)
+        Engine.player.x = min(15, Engine.player.x + 1)
     if js.up:
-        player.y = max(0, player.y - 1)
+        Engine.player.y = max(0, Engine.player.y - 1)
     if js.down:
-        player.y = min(1, player.y + 1)
+        Engine.player.y = min(1, Engine.player.y + 1)
 
-    for obj in objects:
-        if isinstance(obj, Enemy) and obj.x == player.x and obj.y == player.y:
-            obj.health -= 1
-            reset_pos()
+    for enemy in Engine.get_objects_of(Enemy):
+        if enemy.x == Engine.player.x and enemy.y == Engine.player.y:
+            enemy.health -= 1
+            reset_player_pos()
 
-            if obj.health == 0:
-                # Delete enemy
-                objects = [o for o in objects if o != obj]
+            if enemy.health == 0:
+                Engine.delete_object(enemy)
 
-    return objects
+
+Engine.new_object(Kobold(x=7, y=0))
+Engine.new_object(Kobold(x=12, y=1))
+Engine.set_player(Player())
+Engine.run(loop)
