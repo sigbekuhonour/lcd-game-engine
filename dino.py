@@ -1,5 +1,10 @@
-from engine import Engine
+from py_engine import Engine
 import random
+
+Engine.register_sprite("dino", 0)
+Engine.register_sprite("cactus", 1)
+Engine.register_sprite("rock", 2)
+Engine.register_sprite("bird", 3)
 
 
 class Player(Engine.GameObject):
@@ -9,7 +14,7 @@ class Player(Engine.GameObject):
         super().__init__(1, 1)
 
     def render(self):
-        return "dino"
+        return 0
 
 
 class Obstacle(Engine.GameObject):
@@ -20,7 +25,15 @@ class Obstacle(Engine.GameObject):
         super().__init__(15, 0 if self.kind == "bird" else 1)
 
     def render(self):
-        return self.kind
+        match self.kind:
+            case "cactus":
+                return 1
+            case "rock":
+                return 2
+            case "bird":
+                return 3
+            case _:
+                return "X"
 
 
 def loop():

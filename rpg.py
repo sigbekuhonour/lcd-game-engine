@@ -1,4 +1,7 @@
-from engine import Engine
+from py_engine import Engine
+
+Engine.register_sprite("@", 0)
+Engine.register_sprite("K", 1)
 
 
 class Player(Engine.GameObject):
@@ -6,7 +9,7 @@ class Player(Engine.GameObject):
         super().__init__(x, y)
 
     def render(self):
-        return "@"
+        return 0
 
 
 class Enemy(Engine.GameObject):
@@ -20,7 +23,7 @@ class Kobold(Enemy):
         super().__init__(x, y, 2)
 
     def render(self):
-        return "K"
+        return 1
 
 
 def loop():

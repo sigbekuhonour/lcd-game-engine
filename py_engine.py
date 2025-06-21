@@ -2,13 +2,14 @@ import pygame
 from PIL import Image
 
 
-def handle_render(rendered):
-    if isinstance(rendered, list):
-        return rendered
-    elif isinstance(rendered, str):
-        img = Image.open(f"assets/{rendered}.png").convert("RGBA").resize((5, 7))
+class Engine:
+    sprites = {}
+
+    def register_sprite(name, number):
+        img = Image.open(f"assets/{name}.png").convert("RGBA").resize((5, 8))
+
         matrix = []
-        for y in range(7):
+        for y in range(8):
             row = []
             for x in range(5):
                 r, g, b, a = img.getpixel((x, y))
@@ -18,12 +19,19 @@ def handle_render(rendered):
                     row.append(0)
             matrix.append(row)
 
-        return matrix
-    else:
-        raise ValueError("Unsupported render type")
+        Engine.sprites[number] = matrix
 
+    def render(obj):
+        result = obj.render()
 
-class Engine:
+        if isinstance(result, str):
+            return "X"
+        elif isinstance(result, int):
+            if result in Engine.sprites:
+                return Engine.sprites[result]
+            else:
+                raise ValueError(f"Sprite number {result} not registered.")
+
     class GameObject:
         x = 0
         y = 0
@@ -92,7 +100,7 @@ class Engine:
 
     def run(loop):
         CELL_WIDTH = 5
-        CELL_HEIGHT = 7
+        CELL_HEIGHT = 8
         BORDER = 1
         COLS = 16
         ROWS = 2
@@ -148,10 +156,10 @@ class Engine:
             loop()
 
             for obj in Engine.objects:
-                draw_lcd_cell(obj.x, obj.y, handle_render(obj.render()))
+                draw_lcd_cell(obj.x, obj.y, Engine.render(obj))
 
             draw_lcd_cell(
-                Engine.player.x, Engine.player.y, handle_render(Engine.player.render())
+                Engine.player.x, Engine.player.y, Engine.render(Engine.player)
             )
 
             # Scale up the lcd_surface and blit to the screen
