@@ -216,5 +216,8 @@ class Engine:
                 time.sleep(0.1 - elapsed)
 
     def reset():
+        lcd.write_string("Game Over!!!")
+        time.sleep(10)
+        lcd.clear()
         Engine.state = Engine.initial_state.copy()
         Engine.objects = []
